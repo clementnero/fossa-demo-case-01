@@ -1,0 +1,24 @@
+name: Check Licenses
+
+on:
+  push:    
+    branches:
+    - main
+    tags:
+    - '*'
+
+jobs:
+  analyze:
+    name: Analyze dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup fossa-cli
+      uses: camunda/infra-global-github-actions/fossa/setup@a0bc9b0a68c1a9e02aeeb2e061d1292843051269
+    - name: Analyze project
+      uses: camunda/infra-global-github-actions/fossa/analyze@a0bc9b0a68c1a9e02aeeb2e061d1292843051269
+      with:
+        api-key: ${{ secrets.FOSSA_API_KEY }}
+        branch: ${{ github.ref_name }}
+        revision-id: ${{ github.sha }}
