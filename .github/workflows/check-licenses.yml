@@ -1,0 +1,51 @@
+name: Check Licenses
+
+on:
+  push:    
+    branches:
+    - main
+    - develop
+    tags:
+    - '*'
+  pull_request:
+    types:
+    - opened
+    - synchronize
+
+jobs:
+  analyze:
+    name: Analyze dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup fossa-cli
+      uses: camunda/infra-global-github-actions/fossa/setup@fossa
+    - name: Get context info
+      id: info
+      # uses: ./.github/actions/info
+      uses: camunda/infra-global-github-actions/fossa/info@fossa
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Analyze project
+      uses: camunda/infra-global-github-actions/fossa/analyze@fossa
+      with:
+        api-key: ${{ secrets.FOSSA_API_KEY }}
+        branch: ${{  steps.info.outputs.head-ref }}
+        revision-id: ${{ steps.info.outputs.head-revision }}
+    # PR-only: Check for newly introduced license issues
+    # This step only fails if the PR introduces new license violations.
+    # It does not fail for pre-existing issues already present in the base branch.
+    - name: Check Pull Request for new License Issues
+      if: steps.info.outputs.is-pull-request == 'true'
+      # uses: ./.github/actions/pr-check
+      uses: camunda/infra-global-github-actions/fossa/pr-check@fossa
+      with:
+        api-key: ${{ secrets.FOSSA_API_KEY }}
+        base-ref: ${{ steps.info.outputs.base-ref }}
+        # Use the most recent base revision that has completed scanning.
+        # If no such revision exists, fall back to the original base revision, knowing this will cause the check to fail.
+        # This fallback exists solely to allow the workflow to proceed and surface the failure explicitly,
+        # ensuring that unscanned base branches are quickly noticed and addressed.
+        base-revision: ${{ steps.info.outputs.base-revision-most-recent-with-scanning-results || steps.info.outputs.base-revision }}
+        revision: ${{ steps.info.outputs.head-revision }}
