@@ -1,0 +1,6 @@
+version: 3
+
+project:
+  id: fossa-demo@case-01
+  policy: Camunda8 Distribution
+
