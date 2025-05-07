@@ -18,10 +18,14 @@ outputs:
       Empty if not a pull request.
       Generally used to find (via diff) new license issues introduced by a PR.
     value: ${{ steps.info.outputs.base-revision }}
-  revision:
+  head-ref:
+    description: |
+      The HEAD ref (name) of the branch to be analyzed by FOSSA, determined based on the context of the event.
+    value: ${{ steps.info.outputs.head-ref }}
+  head-revision:
     description: |
       The HEAD revision (commit sha) to be analyzed by FOSSA, determined based on the context of the event.
-    value: ${{ steps.info.outputs.revision }}
+    value: ${{ steps.info.outputs.head-revision }}
 
 runs:
   using: composite
@@ -42,7 +46,13 @@ runs:
           github.event.pull_request.base.sha ||
           ''
         }}
-      REVISION: >
+      HEAD_REF: >
+        ${{
+          github.event_name == 'pull_request' && 
+          github.event.pull_request.head.ref ||
+          github.ref_name
+        }}
+      HEAD_REVISION: >
         ${{
           github.event_name == 'pull_request' && 
           github.event.pull_request.head.sha ||
@@ -53,6 +63,7 @@ runs:
         echo "is-pull-request=${IS_PULL_REQUEST}"
         echo "base-ref=${BASE_REF}"
         echo "base-revision=${BASE_REVISION}"
-        echo "revision=${REVISION}"
+        echo "head-ref=${HEAD_REF}"
+        echo "head-revision=${HEAD_REVISION}"
       } >> $GITHUB_OUTPUT
     shell: bash
