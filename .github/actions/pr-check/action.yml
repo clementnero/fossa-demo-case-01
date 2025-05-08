@@ -43,21 +43,23 @@ runs:
       security_issues_count=$(echo "$security_issues" | jq '. | length')
 
       echo "License issues: ${license_issues_count}"
-      echo "Security issues: ${security_issues_count} (non-license issues are currently ignored)"
+      echo "Security issues: ${license_issues_count} (non-license issues are currently ignored)"
 
       echo "license-issues=${license_issues}" >> $GITHUB_OUTPUT
+      echo "license-issues-count=${license_issues_count}" >> $GITHUB_OUTPUT
     shell: bash
-  - name: "License Policy Guard: Issues found, must be fixed"
-    if: fromJSON(steps.check.outputs.license-issues).length != 0
+  - name: License Issues found - Action needed
+    if: fromJSON(steps.check.outputs.license-issues-count) > 0
     env:
       FOSSA_API_KEY: ${{ inputs.api-key }}
       LICENSE_ISSUES: ${{ steps.check.outputs.license-issues }}
+      LICENSE_ISSUES_COUNT: ${{ steps.check.outputs.license-issues-count }}
     run: |
       echo "This PR introduces new license issues that must be addressed prior to merging."
       echo "HOW-TO: https://confluence.camunda.com/spaces/HAN/pages/277024795/FOSSA#FOSSA-Handlelicenseissues"
       echo "License Issues:"
       echo "${LICENSE_ISSUES}" | jq -r '.[] | "- Package: \(.revisionId)\n  License: \(.license)\n  Issue URL: \(.issueDashURL)\n"'
       echo "Adding an annotation to the GitHub job for visibility and exiting with error..."
-      echo "::error::New license issues detected. Please check the logs and resolve before merging."
+      echo "::error title=License Check::${LICENSE_ISSUES_COUNT} issue found. Please check the logs and resolve before merging."
       exit 1
     shell: bash
