@@ -22,18 +22,20 @@ jobs:
       uses: camunda/infra-global-github-actions/fossa/setup@a0bc9b0a68c1a9e02aeeb2e061d1292843051269
     - name: Get context info
       id: info
-      uses: camunda/infra-global-github-actions/fossa/info@fossa
+      uses: ./.github/actions/info
+      # uses: camunda/infra-global-github-actions/fossa/info@fossa
     - name: Analyze project
       uses: camunda/infra-global-github-actions/fossa/analyze@a0bc9b0a68c1a9e02aeeb2e061d1292843051269
       with:
         api-key: ${{ secrets.FOSSA_API_KEY }}
-        branch: ${{ github.ref_name }}
-        revision-id: ${{ steps.info.outputs.revision }}
+        branch: ${{  steps.info.outputs.head-ref }}
+        revision-id: ${{ steps.info.outputs.head-revision }}
     - name: Check Pull Request for new License Issues
       if: steps.info.outputs.is-pull-request == 'true'
-      uses: camunda/infra-global-github-actions/fossa/pr-check@fossa
+      uses: ./.github/actions/pr-check
+      # uses: camunda/infra-global-github-actions/fossa/pr-check@fossa
       with:
         api-key: ${{ secrets.FOSSA_API_KEY }}
         base-ref: ${{ steps.info.outputs.base-ref }}
         base-revision: ${{ steps.info.outputs.base-revision }}
-        revision: ${{ steps.info.outputs.revision }}
+        revision: ${{ steps.info.outputs.head-revision }}

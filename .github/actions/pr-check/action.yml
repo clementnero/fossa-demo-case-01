@@ -37,12 +37,18 @@ runs:
       # Run fossa test
       results=$(fossa test . --diff "${BASE_REVISION}" --revision "${REVISION}" --format json || true)
 
-      echo "Note: Non-license issues from FOSSA test results are currently ignored by this composite action."
+      license_issues=$(echo "$results" | jq -c '.issues | map(select(.type == "policy_flag"))')
+      license_issues_count=$(echo "$license_issues" | jq '. | length')
+      security_issues=$(echo "$results" | jq -c '.issues | map(select(.type == "vulnerability"))')
+      security_issues_count=$(echo "$security_issues" | jq '. | length')
 
-      echo "license-issues=$(echo "$results" | jq -c '.issues | map(select(.type == "policy_flag"))')" >> $GITHUB_OUTPUT
+      echo "License issues: ${license_issues_count}"
+      echo "Security issues: ${security_issues_count} (non-license issues are currently ignored)"
+
+      echo "license-issues=${license_issues}" >> $GITHUB_OUTPUT
     shell: bash
   - name: "License Policy Guard: Issues found, must be fixed"
-    if: steps.check.outputs.license_issues != '[]'
+    if: fromJSON(steps.check.outputs.license-issues).length != 0
     env:
       FOSSA_API_KEY: ${{ inputs.api-key }}
       LICENSE_ISSUES: ${{ steps.check.outputs.license-issues }}
