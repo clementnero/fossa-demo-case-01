@@ -53,29 +53,19 @@ runs:
     env:
       FOSSA_API_KEY: ${{ inputs.api-key }}
       LICENSE_ISSUES: ${{ steps.check.outputs.license-issues }}
-<<<<<<< Updated upstream
-      LICENSE_ISSUES_COUNT: ${{ steps.check.outputs.license-issues-count }}
-=======
-<<<<<<< Updated upstream
-=======
       LICENSE_ISSUES_COUNT: ${{ steps.check.outputs.license-issues-count }}
       JOB_NAME: ${{ github.job }}
->>>>>>> Stashed changes
->>>>>>> Stashed changes
     run: |
       echo "This PR introduces new license issues that must be addressed prior to merging."
       echo "HOW-TO: https://confluence.camunda.com/spaces/HAN/pages/277024795/FOSSA#FOSSA-Handlelicenseissues"
       echo "License Issues:"
       echo "${LICENSE_ISSUES}" | jq -r '.[] | "- Package: \(.revisionId)\n  License: \(.license)\n  Issue URL: \(.issueDashURL)\n"'
       echo "Adding an annotation to the GitHub job for visibility and exiting with error..."
-<<<<<<< Updated upstream
       echo "::error title=License Check::${LICENSE_ISSUES_COUNT} issue found. Please check the logs and resolve before merging."
-=======
-<<<<<<< Updated upstream
       echo "::error::New license issues detected. Please check the logs and resolve before merging."
-=======
       echo "::error title=${{ github.job }}/License Check::${LICENSE_ISSUES_COUNT} issue found. Please check the logs and resolve before merging."
->>>>>>> Stashed changes
->>>>>>> Stashed changes
       exit 1
+    shell: bash
+  - run: |
+      echo "::error title=${{ github.job }}/License Check::Test ..."
     shell: bash
