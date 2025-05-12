@@ -30,6 +30,9 @@ jobs:
         api-key: ${{ secrets.FOSSA_API_KEY }}
         branch: ${{  steps.info.outputs.head-ref }}
         revision-id: ${{ steps.info.outputs.head-revision }}
+    # PR-only: Check for newly introduced license issues
+    # This step only fails if the PR introduces new license violations.
+    # It does not fail for pre-existing issues already present in the base branch.
     - name: Check Pull Request for new License Issues
       if: steps.info.outputs.is-pull-request == 'true'
       # uses: ./.github/actions/pr-check
