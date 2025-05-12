@@ -66,6 +66,3 @@ runs:
       echo "::error title=${{ github.job }}/License Check::${LICENSE_ISSUES_COUNT} issue found. Please check the logs and resolve before merging."
       exit 1
     shell: bash
-  - run: |
-      echo "::error title=${{ github.job }}/License Check::Test ..."
-    shell: bash
