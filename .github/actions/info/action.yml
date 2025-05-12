@@ -36,25 +36,25 @@ runs:
       IS_PULL_REQUEST: ${{ github.event_name == 'pull_request' }}
       BASE_REF: >
         ${{
-          github.event_name == 'pull_request' && 
+          github.event_name == 'pull_request' &&
           github.event.pull_request.base.ref ||
           ''
         }}
       BASE_REVISION: >
         ${{
-          github.event_name == 'pull_request' && 
+          github.event_name == 'pull_request' &&
           github.event.pull_request.base.sha ||
           ''
         }}
       HEAD_REF: >
         ${{
-          github.event_name == 'pull_request' && 
+          github.event_name == 'pull_request' &&
           github.event.pull_request.head.ref ||
           github.ref_name
         }}
       HEAD_REVISION: >
         ${{
-          github.event_name == 'pull_request' && 
+          github.event_name == 'pull_request' &&
           github.event.pull_request.head.sha ||
           github.sha
         }}
