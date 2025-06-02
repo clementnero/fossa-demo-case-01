@@ -24,6 +24,8 @@ jobs:
       id: info
       # uses: ./.github/actions/info
       uses: camunda/infra-global-github-actions/fossa/info@fossa
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Analyze project
       uses: camunda/infra-global-github-actions/fossa/analyze@fossa
       with:
@@ -40,5 +42,9 @@ jobs:
       with:
         api-key: ${{ secrets.FOSSA_API_KEY }}
         base-ref: ${{ steps.info.outputs.base-ref }}
-        base-revision: ${{ steps.info.outputs.base-revision }}
+        # Use the most recent base revision that has completed scanning.
+        # If no such revision exists, fall back to the original base revision, knowing this will cause the check to fail.
+        # This fallback exists solely to allow the workflow to proceed and surface the failure explicitly,
+        # ensuring that unscanned base branches are quickly noticed and addressed.
+        base-revision: ${{ steps.info.outputs.base-revision-most-recent-with-scanning-results || steps.info.outputs.base-revision }}
         revision: ${{ steps.info.outputs.head-revision }}
