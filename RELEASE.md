@@ -1,0 +1,1 @@
+TEST 001: base ref has a scanning result and check-licenses.yml works as expected
