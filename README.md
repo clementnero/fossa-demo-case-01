@@ -1,0 +1,1 @@
+TEST 004: if no workflow is run (i.e. license scan) for a manual merge commit, scanning results from recent commits are used
