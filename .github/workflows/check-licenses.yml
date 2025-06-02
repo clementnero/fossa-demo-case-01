@@ -24,6 +24,7 @@ jobs:
       id: info
       # uses: ./.github/actions/info
       uses: camunda/infra-global-github-actions/fossa/info@fossa
+    - run: exit 1
     # - name: Analyze project
     #   uses: camunda/infra-global-github-actions/fossa/analyze@fossa
     #   with:
