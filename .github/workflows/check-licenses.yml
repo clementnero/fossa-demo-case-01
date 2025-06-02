@@ -27,7 +27,6 @@ jobs:
       uses: camunda/infra-global-github-actions/fossa/info@fossa
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - run: echo 06; exit 1
     - name: Analyze project
       uses: camunda/infra-global-github-actions/fossa/analyze@fossa
       with:
