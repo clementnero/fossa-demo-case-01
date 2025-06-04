@@ -18,17 +18,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
+      id-token: write
+      checks: write
+      actions: write
+      
     steps:
     - uses: actions/checkout@v4
     - name: Setup fossa-cli
       uses: camunda/infra-global-github-actions/fossa/setup@fossa
     - name: Get context info
       id: info
-      # uses: ./.github/actions/info
       uses: camunda/infra-global-github-actions/fossa/info@fossa
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Analyze project
       uses: camunda/infra-global-github-actions/fossa/analyze@fossa
       with:
