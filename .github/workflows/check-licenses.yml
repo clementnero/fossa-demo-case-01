@@ -27,12 +27,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Setup fossa-cli
-      uses: camunda/infra-global-github-actions/fossa/setup@fossa
+      uses: camunda/infra-global-github-actions/fossa/setup@main
     - name: Get context info
       id: info
-      uses: camunda/infra-global-github-actions/fossa/info@fossa
+      uses: camunda/infra-global-github-actions/fossa/info@main
     - name: Analyze project
-      uses: camunda/infra-global-github-actions/fossa/analyze@fossa
+      uses: camunda/infra-global-github-actions/fossa/analyze@main
       with:
         api-key: ${{ secrets.FOSSA_API_KEY }}
         branch: ${{  steps.info.outputs.head-ref }}
@@ -43,7 +43,7 @@ jobs:
     - name: Check Pull Request for new License Issues
       if: steps.info.outputs.is-pull-request == 'true'
       # uses: ./.github/actions/pr-check
-      uses: camunda/infra-global-github-actions/fossa/pr-check@fossa
+      uses: camunda/infra-global-github-actions/fossa/pr-check@main
       with:
         api-key: ${{ secrets.FOSSA_API_KEY }}
         base-ref: ${{ steps.info.outputs.base-ref }}
